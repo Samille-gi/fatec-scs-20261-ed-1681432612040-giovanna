@@ -1,3 +1,14 @@
+"""
+--------------------------------------------------------------------------------------------
+* Fatec São Caetano do Sul                                                                   *
+* B1-3                                                                            *
+* *
+* Autor: 1681432612040 - nome: Giovanna Samille Gonçalves da silva                           *
+* Objetivo:  Simular uma Calculadora HP12c (Pilha RPN)                                                                                  *
+* data: 31/03/2026                                                                           *
+---------------------------------------------------------------------------------------------
+"""
+
 class pilha:
     def __init__(self):
         self.pilha = []
@@ -13,7 +24,7 @@ class pilha:
     def empilhar(self, item):
         self.pilha.append(item)
 
-class  HP12c(pilha):
+class  hp12c(pilha):
     def __init__(self):
         super().__init__() 
 
@@ -48,7 +59,7 @@ class conversao(pilha):
 
         self.empilhar(f"({a} {item} {b})")
     
-minha_pilha = HP12c()
+minha_pilha = hp12c()
 minha_pilha2 = conversao()
 rpn = input("Digite a expressão RPN: ")
 expressao = rpn.split()
