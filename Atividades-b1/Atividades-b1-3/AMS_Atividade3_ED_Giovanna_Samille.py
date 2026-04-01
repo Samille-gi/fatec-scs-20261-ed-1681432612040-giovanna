@@ -1,19 +1,46 @@
+"""
+--------------------------------------------------------------------------------------------
+* Fatec São Caetano do Sul                                                                   *
+* B1-3                                                                            *
+* *
+* Autor: 1681432612040 - nome: Giovanna Samille Gonçalves da silva                           *
+* Objetivo:  Simular uma Calculadora HP12c (Pilha RPN)                                                                                  *
+* data: 31/03/2026                                                                           *
+---------------------------------------------------------------------------------------------
+"""
+
 class pilha:
     def __init__(self):
-        self.pilha = []
+        self.X = 0
+        self.Y = 0
+        self.Z = 0
+        self.T = 0
 
-    def esta_vazia(self):
-        return len(self.pilha) == 0
+        self.count = 0
+
+    def visualizar(self):
+        print(f"X = {self.X}\nY = {self.Y}\nZ = {self.Z}\nT = {self.T}\n")
     
-    def desempilhar(self):
-        if self.esta_vazia():
-            raise IndexError("Atenção: Operação Inválida!")
-        return self.pilha.pop()
+    def desempilhar(self, resultado):
+        self.X = resultado
+        self.Y = self.Z
+        self.Z = self.T
+
+        if self.count > 1:
+            self.count -= 1
     
     def empilhar(self, item):
-        self.pilha.append(item)
+        if self.count > 4:
+            raise OverflowError ("Pilha cheia! O máximo é 4 elementos (X, Y, Z, T)")
 
-class  HP12c(pilha):
+        self.T = self.Z
+        self.Z = self.Y
+        self.Y = self.X
+        self.X = float(item)
+
+        self.count += 1
+
+class  hp12c(pilha):
     def __init__(self):
         super().__init__() 
 
@@ -21,8 +48,11 @@ class  HP12c(pilha):
         super().empilhar(float(item))
 
     def verificar(self, item):
-        b = self.desempilhar()
-        a = self.desempilhar()
+        if item not in ["+", "-", "*", "/"]:
+            raise ValueError("Operador inválido!")
+
+        a = self.Y
+        b = self.X
 
         if item == "+":
             resultado = a + b
@@ -36,35 +66,42 @@ class  HP12c(pilha):
         elif item == "/":
             resultado = a / b
 
-        self.empilhar(resultado)
+        self.desempilhar(resultado)
         
 class conversao(pilha):
     def __init__(self):
-        super().__init__() 
+        super().__init__()
+        self.pilha = []
 
-    def acrescente(self, item):
-        b = self.desempilhar()
-        a = self.desempilhar()
+    def empilhar(self, item):
+        self.pilha.append(item)
 
-        self.empilhar(f"({a} {item} {b})")
+    def acrescentar(self, item):
+        b = self.pilha.pop()
+        a = self.pilha.pop()
+
+        self.pilha.append(f"({a} {item} {b})")
     
-minha_pilha = HP12c()
+minha_pilha = hp12c()
 minha_pilha2 = conversao()
 rpn = input("Digite a expressão RPN: ")
 expressao = rpn.split()
 
-for item in expressao:
-    if item.isdigit():
-        minha_pilha.empilhar(item)
-        minha_pilha2.empilhar(item)
-    else:
-        minha_pilha.verificar(item)
-        minha_pilha2.acrescente(item)
-    print(*minha_pilha.pilha)
-        
-print(*minha_pilha2.pilha)
+try:
+    for item in expressao:
+        if item.replace('.', '', 1).isdigit():
+            minha_pilha.empilhar(item)
+            minha_pilha2.empilhar(item)
+        else:
+            minha_pilha.verificar(item)
+            minha_pilha2.acrescentar(item)
+        minha_pilha.visualizar()
 
-print(f"O resultado da expressão algébrica é: {minha_pilha.pilha[0]:.0f}")
+except ValueError as e:
+    print(f"Erro: {e}")
+     
+print(*minha_pilha2.pilha)
+print(f"O resultado da expressão algébrica é: {minha_pilha.X:.0f}")
 
 
 
