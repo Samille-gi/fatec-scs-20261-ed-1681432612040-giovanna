@@ -30,7 +30,7 @@ class pilha:
             self.count -= 1
     
     def empilhar(self, item):
-        if self.count > 4:
+        if self.count >= 4:
             raise OverflowError ("Pilha cheia! O máximo é 4 elementos (X, Y, Z, T)")
 
         self.T = self.Z
@@ -68,15 +68,18 @@ class  hp12c(pilha):
 
         self.desempilhar(resultado)
         
-class conversao(pilha):
+class conversao:
     def __init__(self):
-        super().__init__()
         self.pilha = []
 
     def empilhar(self, item):
         self.pilha.append(item)
 
     def acrescentar(self, item):
+
+        if len(self.pilha) < 2:
+            raise ValueError("Expressão RPN inválida.")
+
         b = self.pilha.pop()
         a = self.pilha.pop()
 
@@ -97,11 +100,11 @@ try:
             minha_pilha2.acrescentar(item)
         minha_pilha.visualizar()
 
-except ValueError as e:
+except (ValueError, OverflowError) as e:
     print(f"Erro: {e}")
      
 print(*minha_pilha2.pilha)
-print(f"O resultado da expressão algébrica é: {minha_pilha.X:.0f}")
+print(f"O resultado da expressão algébrica é: {minha_pilha.X:.4f}")
 
 
 
